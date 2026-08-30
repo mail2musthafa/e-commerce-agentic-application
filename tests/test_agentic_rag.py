@@ -11,11 +11,26 @@ client = TestClient(app)
 
 
 def test_agentic_rag_happy_path():
-    # 0. Clean up database to ensure isolation
+    # 0. Clean up database and OpenSearch to ensure isolation
     async def cleanup():
         async with async_session() as db:
             await db.execute(delete(KnowledgeChunk))
             await db.commit()
+
+        from services.knowledge.opensearch_client import (
+            INDEX_NAME,
+            get_opensearch_client,
+        )
+
+        client = get_opensearch_client()
+        try:
+            await client.delete_by_query(
+                index=INDEX_NAME, body={"query": {"match_all": {}}}, refresh=True
+            )
+        except Exception:
+            pass
+        finally:
+            await client.close()
 
     asyncio.run(cleanup())
 
@@ -47,11 +62,26 @@ def test_agentic_rag_happy_path():
 
 
 def test_agentic_rag_fallback_path():
-    # 0. Clean up database to ensure isolation
+    # 0. Clean up database and OpenSearch to ensure isolation
     async def cleanup():
         async with async_session() as db:
             await db.execute(delete(KnowledgeChunk))
             await db.commit()
+
+        from services.knowledge.opensearch_client import (
+            INDEX_NAME,
+            get_opensearch_client,
+        )
+
+        client = get_opensearch_client()
+        try:
+            await client.delete_by_query(
+                index=INDEX_NAME, body={"query": {"match_all": {}}}, refresh=True
+            )
+        except Exception:
+            pass
+        finally:
+            await client.close()
 
     asyncio.run(cleanup())
 

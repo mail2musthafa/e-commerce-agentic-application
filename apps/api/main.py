@@ -6,6 +6,7 @@ from services.customers.router import router as customers_router
 from services.inventory.router import router as inventory_router
 from services.knowledge.router import router as knowledge_router
 from services.llm.router import router as llm_router
+from services.memory.router import router as memory_router
 from services.orders.router import router as orders_router
 from services.payments.router import router as payments_router
 from services.shipping.router import router as shipping_router
@@ -34,6 +35,7 @@ app.include_router(payments_router)
 app.include_router(shipping_router)
 app.include_router(llm_router)
 app.include_router(knowledge_router)
+app.include_router(memory_router)
 
 
 @app.get("/health", tags=["Health"])

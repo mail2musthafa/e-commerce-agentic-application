@@ -5,8 +5,31 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
+from services.catalog.models import Category, Product
+from services.customers.models import Customer
+
 # Import all models to register them on the Base metadata for autogenerate detection
 from services.database import DATABASE_URL, Base
+from services.inventory.models import InventoryItem
+from services.knowledge.models import KnowledgeChunk
+from services.memory.models import ConversationMessage
+from services.orders.models import Order, OrderItem
+from services.payments.models import Transaction
+from services.shipping.models import Shipment
+
+# Reference models to prevent unused-import pruning by formatters
+_ = [
+    Category,
+    Product,
+    InventoryItem,
+    Customer,
+    Order,
+    OrderItem,
+    Transaction,
+    Shipment,
+    KnowledgeChunk,
+    ConversationMessage,
+]
 
 # Interpret the config file for Python logging
 config = context.config
