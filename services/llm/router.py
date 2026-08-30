@@ -1,0 +1,86 @@
+from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, Field
+
+from services.llm.client import LLMClient, LLMResponse
+
+router = APIRouter(prefix="/llm", tags=["LLM Gateway"])
+
+
+# Request/Response schemas
+class GenerateRequest(BaseModel):
+    prompt: str = Field(..., description="Prompt message to send to the LLM")
+    system_prompt: str | None = Field(None, description="Optional system instruction")
+    temperature: float = Field(0.7, ge=0.0, le=2.0)
+
+
+# Mock models for structured output testing
+class MockParsedOrder(BaseModel):
+    customer_name: str = Field(..., description="Name of the customer extracted")
+    items: list[str] = Field(..., description="List of items in the order")
+    total_price: float = Field(..., description="Total price calculated")
+
+
+class MockParsedProduct(BaseModel):
+    sku: str = Field(..., description="SKU identified")
+    name: str = Field(..., description="Product name extracted")
+    price: float = Field(..., description="Product price parsed")
+
+
+class StructuredRequest(BaseModel):
+    prompt: str = Field(
+        ..., description="Prompt description containing the unstructured data to parse"
+    )
+    schema_type: str = Field(
+        ..., description="Target parse schema, options: 'order', 'product'"
+    )
+
+
+llm = LLMClient()
+
+
+@router.post("/generate", response_model=LLMResponse)
+async def generate_text(payload: GenerateRequest):
+    messages = []
+    if payload.system_prompt:
+        messages.append({"role": "system", "content": payload.system_prompt})
+    messages.append({"role": "user", "content": payload.prompt})
+
+    try:
+        response = await llm.generate(
+            messages=messages, temperature=payload.temperature
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)
+        ) from e
+
+
+@router.post("/structured", response_model=LLMResponse)
+async def generate_structured(payload: StructuredRequest):
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a precise data extractor. Extract attributes matching the requested schema format from the user content.",
+        },
+        {"role": "user", "content": payload.prompt},
+    ]
+
+    # Map dynamic target Pydantic schemas based on requested schema type
+    if payload.schema_type.lower() == "order":
+        response_model = MockParsedOrder
+    elif payload.schema_type.lower() == "product":
+        response_model = MockParsedProduct
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Schema type '{payload.schema_type}' is not supported. Choose 'order' or 'product'.",
+        )
+
+    try:
+        response = await llm.generate(messages=messages, response_model=response_model)
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)
+        ) from e
