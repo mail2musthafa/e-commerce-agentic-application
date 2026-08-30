@@ -1,7 +1,10 @@
+from typing import Any
+
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
 from services.llm.client import LLMClient, LLMResponse
+from services.llm.tools import run_tool_agent
 
 router = APIRouter(prefix="/llm", tags=["LLM Gateway"])
 
@@ -80,6 +83,28 @@ async def generate_structured(payload: StructuredRequest):
     try:
         response = await llm.generate(messages=messages, response_model=response_model)
         return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)
+        ) from e
+
+
+class AssistantRequest(BaseModel):
+    prompt: str = Field(
+        ..., description="The user instructions for the shopping assistant"
+    )
+    customer_id: int | None = Field(
+        None, description="Optional customer context ID for cart/checkout authorization"
+    )
+
+
+@router.post("/assistant", response_model=list[dict[str, Any]])
+async def run_assistant(payload: AssistantRequest):
+    try:
+        conversation = await run_tool_agent(
+            prompt=payload.prompt, customer_id=payload.customer_id
+        )
+        return conversation
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)
