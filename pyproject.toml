@@ -4,22 +4,21 @@ version = "0.1.0"
 description = "Agentic Commerce Platform Monorepo Workspace"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "alembic>=1.19.1",
+    "asyncpg>=0.31.0",
+    "fastapi>=0.141.1",
+    "greenlet>=3.5.5",
+    "redis>=8.1.0",
+    "sqlalchemy>=2.0.52",
+    "uvicorn>=0.52.4",
+]
 
 [tool.uv]
 managed = true
 
 [tool.uv.workspace]
-members = [
-    "apps/*",
-    "services/*",
-    "agents/*",
-    "mcp/*",
-    "rag/*",
-    "memory/*",
-    "workflows/*",
-    "evaluation/*"
-]
+members = []
 
 [tool.ruff]
 line-length = 88
@@ -35,7 +34,10 @@ select = [
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
 ]
-ignore = []
+ignore = [
+    "B008",  # do not perform function calls in argument defaults (standard for FastAPI Depends)
+    "E501",  # line too long (delegated to ruff format)
+]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -45,6 +47,7 @@ line-ending = "auto"
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
     "ruff>=0.16.5",

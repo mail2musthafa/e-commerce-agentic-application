@@ -574,10 +574,10 @@ agentic-commerce-platform/
                        Stage 00: Engineering Foundation (COMPLETED)
                                          │
                                          ▼
-                             Stage 01: Commerce Core (IN PROGRESS)
-                                         │
-                                         ▼
-                       Stage 02: LLM Application Foundation
+                              Stage 01: Commerce Core (COMPLETED)
+                                          │
+                                          ▼
+                        Stage 02: LLM Application Foundation (IN PROGRESS)
                                          │
                                          ▼
                             Stages 03-08: RAG & Agents
@@ -605,7 +605,7 @@ agentic-commerce-platform/
     * CI pipeline baseline established, passing boilerplate checks.
 
 ### Stage 01 — Commerce Core
-* **Status**: `In Progress`
+* **Status**: `Completed`
 * **Objective**: Build the core transactional e-commerce APIs without any AI components.
 * **Key Technologies**: FastAPI, PostgreSQL, SQLAlchemy, Alembic, Pydantic, Redis.
 * **Exit Criteria**:
@@ -614,7 +614,7 @@ agentic-commerce-platform/
     * Integrations validated with >85% unit test coverage.
 
 ### Stage 02 — LLM Application Foundation
-* **Status**: `Planned`
+* **Status**: `In Progress`
 * **Objective**: Establish secure model connectivity, routing strategies, and schema mappings.
 * **Key Technologies**: LiteLLM Proxy, OpenAI, Anthropic, Gemini, Pydantic validation.
 * **Exit Criteria**:
@@ -927,8 +927,8 @@ Detailed arguments and technical trade-offs are documented under [docs/adr/](fil
 Detailed implementation progress guides are located under [docs/stages/](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/):
 
 * **[Stage 00 — Engineering Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-00-engineering-foundation.md)**: Completed.
-* **[Stage 01 — Commerce Core](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-01-commerce-core.md)**: Current Stage.
-* **[Stage 02 — LLM Application Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-02-llm-foundation.md)**
+* **[Stage 01 — Commerce Core](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-01-commerce-core.md)**: Completed.
+* **[Stage 02 — LLM Application Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-02-llm-foundation.md)**: Current Stage.
 * **[Stage 03 — Tool Calling Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-03-tool-calling.md)**
 * **[Stage 04 — Knowledge & Retrieval Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-04-knowledge-retrieval.md)**
 * **[Stage 05 — Advanced Retrieval](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-05-advanced-retrieval.md)**
