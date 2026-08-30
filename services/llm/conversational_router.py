@@ -38,6 +38,21 @@ class ConversationalRouter:
         self, query: str, customer_id: int | None = None, db: AsyncSession = None
     ) -> ConversationalRouteResponse:
         """Classifies incoming query intent and dispatches execution logic to the appropriate sub-pipeline."""
+        # 0. Check input safety guardrails
+        from services.llm.moderation import SAFETY_BLOCKED_RESPONSE, check_moderation
+
+        safety = await check_moderation(query)
+        if not safety.is_safe:
+            logger.warning(
+                f"Safety guardrail blocked query: '{query}' (Harm Category: {safety.harm_category})"
+            )
+            return ConversationalRouteResponse(
+                intent="SAFETY_BLOCKED",
+                confidence=1.0,
+                reasoning=f"Blocked unsafe query. Category: {safety.harm_category}. Reasoning: {safety.reasoning}",
+                response={"answer": SAFETY_BLOCKED_RESPONSE},
+            )
+
         # 1. Classify intent via structured LLM zero-shot prompt
         system_prompt = (
             "You are an e-commerce routing classifier. Classify user queries into one of three categories:\n"

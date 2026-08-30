@@ -183,8 +183,10 @@ class LLMClient:
                 prompt_content = "".join(m.get("content", "") for m in messages).lower()
 
             for field_name, field_info in response_model.model_fields.items():
-                if field_info.annotation == str or "Literal" in str(
-                    field_info.annotation
+                annotation_str = str(field_info.annotation)
+                is_list = getattr(field_info.annotation, "__origin__", None) == list
+                if not is_list and (
+                    "str" in annotation_str or "Literal" in annotation_str
                 ):
                     if response_model.__name__ == "QueryRewrite":
                         if "unknown" in prompt_content or "unrelated" in prompt_content:
@@ -221,14 +223,34 @@ class LLMClient:
                             mock_data[field_name] = (
                                 "Detected keyword matches in query prompt."
                             )
+                    elif response_model.__name__ == "ModerationCheck":
+                        if field_name == "harm_category":
+                            if any(
+                                w in prompt_content
+                                for w in ["jailbreak", "toxic", "bypass", "harmful"]
+                            ):
+                                mock_data[field_name] = "jailbreak/toxicity"
+                            else:
+                                mock_data[field_name] = None
+                        else:
+                            mock_data[field_name] = "Mock safety evaluation reasoning."
                     else:
                         mock_data[field_name] = f"Mock {field_name}"
                 elif field_info.annotation == bool:
-                    # Dynamically evaluate relevance to simulate grading branch fallbacks
-                    if "unknown" in prompt_content or "unrelated" in prompt_content:
-                        mock_data[field_name] = False
+                    if response_model.__name__ == "ModerationCheck":
+                        if any(
+                            w in prompt_content
+                            for w in ["jailbreak", "toxic", "bypass", "harmful"]
+                        ):
+                            mock_data[field_name] = False
+                        else:
+                            mock_data[field_name] = True
                     else:
-                        mock_data[field_name] = True
+                        # Dynamically evaluate relevance to simulate grading branch fallbacks
+                        if "unknown" in prompt_content or "unrelated" in prompt_content:
+                            mock_data[field_name] = False
+                        else:
+                            mock_data[field_name] = True
                 elif field_info.annotation == int:
                     mock_data[field_name] = 42
                 elif field_info.annotation == float:
