@@ -1,0 +1,51 @@
+[project]
+name = "agentic-commerce-platform"
+version = "0.1.0"
+description = "Agentic Commerce Platform Monorepo Workspace"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+managed = true
+
+[tool.uv.workspace]
+members = [
+    "apps/*",
+    "services/*",
+    "agents/*",
+    "mcp/*",
+    "rag/*",
+    "memory/*",
+    "workflows/*",
+    "evaluation/*"
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "ruff>=0.16.5",
+]

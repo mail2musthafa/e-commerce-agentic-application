@@ -1,6 +1,6 @@
 # Agentic Commerce Platform
 
-Agentic Commerce Platform is an industry-standard, production-grade Agentic AI commerce platform implemented at portfolio scale. 
+Agentic Commerce Platform is an industry-standard, production-grade Agentic AI commerce platform implemented at portfolio scale.
 
 This project demonstrates the complete production lifecycle of modern Agentic AI systems, from foundational e-commerce domain services through LLM application engineering, durable orchestrations, security policy enforcement, vendor-neutral OpenTelemetry tracing, and quantitative evaluation suites.
 
@@ -8,9 +8,9 @@ This project demonstrates the complete production lifecycle of modern Agentic AI
 
 ## Executive Summary
 
-Agentic Commerce Platform represents a transition from typical AI prototypes to a hardened, enterprise-ready agent platform. It implements a realistic e-commerce backend integrated with a stateful multi-agent workforce. The agents run on [LangGraph](https://github.com/langchain-ai/langgraph) for complex reasoning and coordinate with [Temporal](https://temporal.io/) to enforce durability and consistency for transactional business logic. 
+Agentic Commerce Platform represents a transition from typical AI prototypes to a hardened, enterprise-ready agent platform. It implements a realistic e-commerce backend integrated with a stateful multi-agent workforce. The agents run on [LangGraph](https://github.com/langchain-ai/langgraph) for complex reasoning and coordinate with [Temporal](https://temporal.io/) to enforce durability and consistency for transactional business logic.
 
-Rather than relying on model judgment to secure actions, the system enforces access control via [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) and deterministic schema validation. The platform is instrumented end-to-end with **OpenTelemetry**, exporting metrics, logs, and traces to **Langfuse**, **MLflow**, and standard observability backends (Prometheus, Tempo, Loki, Grafana). 
+Rather than relying on model judgment to secure actions, the system enforces access control via [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) and deterministic schema validation. The platform is instrumented end-to-end with **OpenTelemetry**, exporting metrics, logs, and traces to **Langfuse**, **MLflow**, and standard observability backends (Prometheus, Tempo, Loki, Grafana).
 
 The repository functions as a modular monorepo, evolving systematically through 28 structured engineering stages, each governed by strict exit criteria and automated quality gates.
 
@@ -128,7 +128,7 @@ graph TD
     %% Gateway to Backend
     Gateway --> Auth["Auth Service (OAuth2/OIDC)"]
     Gateway --> App["Modular Monolith (FastAPI)"]
-    
+
     %% Application Services
     subgraph Services ["Commerce Services & Abstractions"]
         App --> Cat["Catalog Service"]
@@ -159,7 +159,7 @@ graph TD
         MCPcat["Catalog MCP Server"]
         MCPinv["Inventory MCP Server"]
         MCPord["Order MCP Server"]
-        
+
         MCPhost --> MCPgate
         MCPgate --> MCPcat
         MCPgate --> MCPinv
@@ -262,7 +262,7 @@ graph LR
         Promptfoo["Promptfoo Red Teaming"]
         MLflowEval["MLflow Evaluators"]
         GoldenDB[(Golden Datasets)]
-        
+
         Langfuse -->|"Failed Traces"| GoldenDB
         GoldenDB --> MLflowEval
         MLflowEval -->|"Groundedness/ROUGE"| MLflow
@@ -276,7 +276,7 @@ graph LR
 ```mermaid
 graph TD
     Dev["Developer commits code / prompt"] --> CI["GitHub Actions CI Pipeline"]
-    
+
     subgraph GatedChecks ["CI Validation Gates"]
         CI --> Lint["Lint & Format (Black, Ruff, ESLint)"]
         CI --> Unit["Unit & Contract Tests (Pytest, Pact)"]
@@ -286,9 +286,9 @@ graph TD
 
     CheckPassed -->|No| Fail["Block PR / Notify Dev"]
     CheckPassed -->|Yes| Merge["Merge to main"]
-    
+
     Merge --> CD["Argo CD Deployment"]
-    
+
     subgraph CD_Env ["Runtime Targets"]
         CD --> Staging["Staging Cluster (K8s)"]
         Staging --> Prod["Production Cluster (K8s)"]
@@ -374,7 +374,7 @@ The project implements a vendor-neutral OpenTelemetry core pipeline:
                  ┌─────────────────────────┐
                  │ OpenTelemetry Collector │
                  └─────┬───────────┬───────┘
-                       │           │           
+                       │           │
              Traces    ▼           ▼  Metrics
       ┌──────────────────┐       ┌─────────────────┐
       │  Grafana Tempo   │       │   Prometheus    │
@@ -571,10 +571,10 @@ agentic-commerce-platform/
 ## Development Program (Roadmap)
 
 ```
-                       Stage 00: Engineering Foundation (IN PROGRESS)
+                       Stage 00: Engineering Foundation (COMPLETED)
                                          │
                                          ▼
-                             Stage 01: Commerce Core
+                             Stage 01: Commerce Core (IN PROGRESS)
                                          │
                                          ▼
                        Stage 02: LLM Application Foundation
@@ -595,7 +595,7 @@ agentic-commerce-platform/
 ---
 
 ### Stage 00 — Engineering Foundation
-* **Status**: `In Progress`
+* **Status**: `Completed`
 * **Objective**: Initialize the monorepo structure, lock Python/TypeScript environments, and configure local container runtimes.
 * **Key Technologies**: Python, TypeScript, Docker Compose, Black, Ruff, ESLint, Prettier, Pytest, GitHub Actions.
 * **Exit Criteria**:
@@ -605,7 +605,7 @@ agentic-commerce-platform/
     * CI pipeline baseline established, passing boilerplate checks.
 
 ### Stage 01 — Commerce Core
-* **Status**: `Planned`
+* **Status**: `In Progress`
 * **Objective**: Build the core transactional e-commerce APIs without any AI components.
 * **Key Technologies**: FastAPI, PostgreSQL, SQLAlchemy, Alembic, Pydantic, Redis.
 * **Exit Criteria**:
@@ -926,8 +926,8 @@ Detailed arguments and technical trade-offs are documented under [docs/adr/](fil
 
 Detailed implementation progress guides are located under [docs/stages/](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/):
 
-* **[Stage 00 — Engineering Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-00-engineering-foundation.md)**: Current Stage.
-* **[Stage 01 — Commerce Core](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-01-commerce-core.md)**
+* **[Stage 00 — Engineering Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-00-engineering-foundation.md)**: Completed.
+* **[Stage 01 — Commerce Core](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-01-commerce-core.md)**: Current Stage.
 * **[Stage 02 — LLM Application Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-02-llm-foundation.md)**
 * **[Stage 03 — Tool Calling Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-03-tool-calling.md)**
 * **[Stage 04 — Knowledge & Retrieval Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-04-knowledge-retrieval.md)**

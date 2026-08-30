@@ -1,0 +1,43 @@
+name: CI Baseline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sync Dependencies
+        run: |
+          uv sync
+
+      - name: Lint with Ruff
+        run: |
+          uv run ruff check .
+
+      - name: Check Formatting with Ruff
+        run: |
+          uv run ruff format --check .
+
+      - name: Run Tests
+        run: |
+          uv run pytest tests/
