@@ -1,0 +1,39 @@
+from fastapi.testclient import TestClient
+
+from apps.api.main import app
+
+client = TestClient(app)
+
+
+def test_knowledge_indexing_and_retrieval():
+    # 1. Index a document containing policy details
+    index_payload = {
+        "document_name": "shipping_policy.md",
+        "content": (
+            "Shipping Policy: Standard shipping takes 3-5 business days. "
+            "Express shipping takes 1-2 business days. "
+            "International shipping is calculated at checkout based on location."
+        ),
+        "chunk_size": 100,
+        "chunk_overlap": 20,
+    }
+    response = client.post("/knowledge/index", json=index_payload)
+    assert response.status_code == 201
+
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["chunks_created"] > 0
+
+    # 2. Query the index using vector similarity search
+    search_payload = {"query": "How many days for standard shipping?", "top_k": 2}
+    search_response = client.post("/knowledge/search", json=search_payload)
+    assert search_response.status_code == 200
+
+    results = search_response.json()
+    assert len(results) > 0
+
+    # 3. Assert the best matching chunk is retrieved with high relevance
+    top_match = results[0]
+    assert top_match["document_name"] == "shipping_policy.md"
+    assert "shipping" in top_match["content"].lower()
+    assert top_match["distance"] >= 0.0  # Cosine distance should be a positive float

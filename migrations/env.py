@@ -6,7 +6,6 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # Import all models to register them on the Base metadata for autogenerate detection
-# Import our database connection and base metadata
 from services.database import DATABASE_URL, Base
 
 # Interpret the config file for Python logging

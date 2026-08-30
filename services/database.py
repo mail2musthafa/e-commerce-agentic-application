@@ -5,7 +5,7 @@ from collections.abc import AsyncGenerator
 import redis.asyncio as redis
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.pool import NullPool, QueuePool
+from sqlalchemy.pool import NullPool
 
 # Database configuration
 DATABASE_URL = os.getenv(
@@ -16,17 +16,14 @@ DATABASE_URL = os.getenv(
 # Detect if running under pytest to disable pooling and prevent event loop issues
 is_testing = "pytest" in sys.modules or os.getenv("TESTING") == "1"
 
-# Create the async SQLAlchemy engine
-engine = create_async_engine(
-    DATABASE_URL,
-    echo=False,
-    poolclass=NullPool if is_testing else QueuePool,
-    **(
-        {}
-        if is_testing
-        else {"pool_size": 10, "max_overflow": 20, "pool_pre_ping": True}
-    ),
-)
+# Create the async SQLAlchemy engine dynamically
+engine_kwargs = {"echo": False}
+if is_testing:
+    engine_kwargs["poolclass"] = NullPool
+else:
+    engine_kwargs.update({"pool_size": 10, "max_overflow": 20, "pool_pre_ping": True})
+
+engine = create_async_engine(DATABASE_URL, **engine_kwargs)
 
 # Async session factory
 async_session = async_sessionmaker(
