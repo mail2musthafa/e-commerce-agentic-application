@@ -623,7 +623,7 @@ agentic-commerce-platform/
     * API usage cost and token metrics tracked.
 
 ### Stage 03 — Tool Calling Foundation
-* **Status**: `Planned`
+* **Status**: `Completed`
 * **Objective**: Create tool execution frameworks for e-commerce services with strict schemas.
 * **Key Technologies**: Pydantic XML/JSON schemas, function calling interfaces.
 * **Exit Criteria**:
@@ -632,7 +632,7 @@ agentic-commerce-platform/
     * Invalid arguments or execution failures handled gracefully.
 
 ### Stage 04 — Knowledge & Retrieval Foundation
-* **Status**: `Planned`
+* **Status**: `In Progress`
 * **Objective**: Deploy a foundational RAG pipeline for customer FAQs and policies.
 * **Key Technologies**: pgvector, SentenceTransformers, LangChain splitters.
 * **Exit Criteria**:
@@ -928,9 +928,9 @@ Detailed implementation progress guides are located under [docs/stages/](file://
 
 * **[Stage 00 — Engineering Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-00-engineering-foundation.md)**: Completed.
 * **[Stage 01 — Commerce Core](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-01-commerce-core.md)**: Completed.
-* **[Stage 02 — LLM Application Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-02-llm-foundation.md)**: Current Stage.
-* **[Stage 03 — Tool Calling Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-03-tool-calling.md)**
-* **[Stage 04 — Knowledge & Retrieval Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-04-knowledge-retrieval.md)**
+* **[Stage 02 — LLM Application Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-02-llm-foundation.md)**: Completed.
+* **[Stage 03 — Tool Calling Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-03-tool-calling.md)**: Completed.
+* **[Stage 04 — Knowledge & Retrieval Foundation](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-04-knowledge-retrieval.md)**: Current Stage.
 * **[Stage 05 — Advanced Retrieval](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-05-advanced-retrieval.md)**
 * **[Stage 06 — Agentic RAG](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-06-agentic-rag.md)**
 * **[Stage 07 — Single-Agent Runtime](file:///Users/musthafaabeed/Desktop/Musthafa/musthafa_data/e-commerce/docs/stages/stage-07-single-agent-runtime.md)**
