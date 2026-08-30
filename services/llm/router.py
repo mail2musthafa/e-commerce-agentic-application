@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.database import get_db
+from services.llm.a2a import A2ADispatcher, A2AMessage, A2AResponse
 from services.llm.client import LLMClient, LLMResponse
 from services.llm.conversational_router import (
     ConversationalRouter,
@@ -143,6 +144,20 @@ async def dispatch_multi_agent_route(
         response = await coordinator.coordinate(
             query=payload.prompt, customer_id=payload.customer_id, db=db
         )
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)
+        ) from e
+
+
+@router.post("/a2a", response_model=A2AResponse)
+async def dispatch_a2a_negotiation(
+    payload: A2AMessage, db: AsyncSession = Depends(get_db)
+):
+    dispatcher = A2ADispatcher()
+    try:
+        response = await dispatcher.dispatch(payload, db=db)
         return response
     except Exception as e:
         raise HTTPException(
