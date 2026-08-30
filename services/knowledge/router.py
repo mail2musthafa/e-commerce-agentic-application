@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from services.database import get_db
+from services.knowledge.agentic_rag import AgenticRAGPipeline, AgenticRAGResponse
 from services.knowledge.indexing import get_embedding, split_text
 from services.knowledge.models import KnowledgeChunk
 from services.knowledge.schemas import (
@@ -217,4 +218,19 @@ async def search_hybrid(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Hybrid search failed: {str(e)}",
+        ) from e
+
+
+@router.post("/agentic_search", response_model=AgenticRAGResponse)
+async def search_agentic(
+    payload: KnowledgeSearchRequest, db: AsyncSession = Depends(get_db)
+):
+    pipeline = AgenticRAGPipeline()
+    try:
+        response = await pipeline.execute(payload.query, db)
+        return response
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Agentic RAG pipeline failed: {str(e)}",
         ) from e

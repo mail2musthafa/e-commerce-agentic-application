@@ -173,11 +173,24 @@ class LLMClient:
 
         if response_model:
             # Generate dummy Pydantic model populated with mock defaults
-            # Find fields and mock based on type annotation
             mock_data = {}
+            prompt_content = "".join(m.get("content", "") for m in messages).lower()
+
             for field_name, field_info in response_model.model_fields.items():
                 if field_info.annotation == str:
-                    mock_data[field_name] = f"Mock {field_name}"
+                    if response_model.__name__ == "QueryRewrite":
+                        if "unknown" in prompt_content or "unrelated" in prompt_content:
+                            mock_data[field_name] = "unknown rewritten query"
+                        else:
+                            mock_data[field_name] = "rewritten query"
+                    else:
+                        mock_data[field_name] = f"Mock {field_name}"
+                elif field_info.annotation == bool:
+                    # Dynamically evaluate relevance to simulate grading branch fallbacks
+                    if "unknown" in prompt_content or "unrelated" in prompt_content:
+                        mock_data[field_name] = False
+                    else:
+                        mock_data[field_name] = True
                 elif field_info.annotation == int:
                     mock_data[field_name] = 42
                 elif field_info.annotation == float:
