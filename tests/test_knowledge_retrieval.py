@@ -1,12 +1,25 @@
+import asyncio
+
 from fastapi.testclient import TestClient
+from sqlalchemy import delete
 
 from apps.api.main import app
+from services.database import async_session
+from services.knowledge.models import KnowledgeChunk
 
 client = TestClient(app)
 
 
 def test_knowledge_indexing_and_retrieval():
-    # 1. Index a document containing policy details
+    # 0. Clean up database to ensure isolation
+    async def cleanup():
+        async with async_session() as db:
+            await db.execute(delete(KnowledgeChunk))
+            await db.commit()
+
+    asyncio.run(cleanup())
+
+    # 1. Index a document containing shipping details
     index_payload = {
         "document_name": "shipping_policy.md",
         "content": (
@@ -36,4 +49,4 @@ def test_knowledge_indexing_and_retrieval():
     top_match = results[0]
     assert top_match["document_name"] == "shipping_policy.md"
     assert "shipping" in top_match["content"].lower()
-    assert top_match["distance"] >= 0.0  # Cosine distance should be a positive float
+    assert top_match["distance"] >= 0.0

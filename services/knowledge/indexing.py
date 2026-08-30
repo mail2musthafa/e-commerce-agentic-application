@@ -65,3 +65,26 @@ async def get_embedding(text: str) -> list[float]:
         if is_testing:
             return _get_mock_embedding(text)
         raise e
+
+
+async def index_chunk_in_opensearch(
+    chunk_id: str, document_name: str, content: str, embedding: list[float]
+):
+    """Pushes a document text chunk and its embedding vector into OpenSearch."""
+    from services.knowledge.opensearch_client import INDEX_NAME, get_opensearch_client
+
+    client = get_opensearch_client()
+    try:
+        doc = {
+            "document_name": document_name,
+            "content": content,
+            "embedding": embedding,
+        }
+        await client.index(index=INDEX_NAME, id=chunk_id, body=doc, refresh=True)
+        logger.info(f"Chunk '{chunk_id}' indexed in OpenSearch.")
+    except Exception as e:
+        logger.warning(
+            f"Failed to index chunk in OpenSearch (continuing gracefully): {e}"
+        )
+    finally:
+        await client.close()
