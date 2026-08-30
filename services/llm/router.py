@@ -1,9 +1,15 @@
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from services.database import get_db
 from services.llm.client import LLMClient, LLMResponse
+from services.llm.conversational_router import (
+    ConversationalRouter,
+    ConversationalRouteResponse,
+)
 from services.llm.tools import run_tool_agent
 
 router = APIRouter(prefix="/llm", tags=["LLM Gateway"])
@@ -105,6 +111,22 @@ async def run_assistant(payload: AssistantRequest):
             prompt=payload.prompt, customer_id=payload.customer_id
         )
         return conversation
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)
+        ) from e
+
+
+@router.post("/conversational_route", response_model=ConversationalRouteResponse)
+async def dispatch_conversational_route(
+    payload: AssistantRequest, db: AsyncSession = Depends(get_db)
+):
+    router_agent = ConversationalRouter()
+    try:
+        response = await router_agent.route_query(
+            query=payload.prompt, customer_id=payload.customer_id, db=db
+        )
+        return response
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)

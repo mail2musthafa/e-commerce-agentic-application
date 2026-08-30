@@ -174,15 +174,53 @@ class LLMClient:
         if response_model:
             # Generate dummy Pydantic model populated with mock defaults
             mock_data = {}
-            prompt_content = "".join(m.get("content", "") for m in messages).lower()
+            # Extract the actual user query content specifically to prevent system prompt pollution
+            user_msg = next(
+                (m.get("content", "") for m in messages if m.get("role") == "user"), ""
+            )
+            prompt_content = user_msg.lower()
+            if not prompt_content:
+                prompt_content = "".join(m.get("content", "") for m in messages).lower()
 
             for field_name, field_info in response_model.model_fields.items():
-                if field_info.annotation == str:
+                if field_info.annotation == str or "Literal" in str(
+                    field_info.annotation
+                ):
                     if response_model.__name__ == "QueryRewrite":
                         if "unknown" in prompt_content or "unrelated" in prompt_content:
                             mock_data[field_name] = "unknown rewritten query"
                         else:
                             mock_data[field_name] = "rewritten query"
+                    elif response_model.__name__ == "IntentClassification":
+                        if field_name == "intent":
+                            # Dynamically route intent based on prompt content
+                            if any(
+                                w in prompt_content
+                                for w in ["ship", "policy", "cancel", "return", "faq"]
+                            ):
+                                mock_data[field_name] = "RAG"
+                            elif any(
+                                w in prompt_content
+                                for w in [
+                                    "product",
+                                    "show",
+                                    "shoes",
+                                    "clothes",
+                                    "catalog",
+                                ]
+                            ):
+                                mock_data[field_name] = "CATALOG"
+                            elif any(
+                                w in prompt_content
+                                for w in ["add", "cart", "checkout", "pay"]
+                            ):
+                                mock_data[field_name] = "TRANSACTIONAL"
+                            else:
+                                mock_data[field_name] = "RAG"
+                        else:
+                            mock_data[field_name] = (
+                                "Detected keyword matches in query prompt."
+                            )
                     else:
                         mock_data[field_name] = f"Mock {field_name}"
                 elif field_info.annotation == bool:
