@@ -234,6 +234,35 @@ class LLMClient:
                                 mock_data[field_name] = None
                         else:
                             mock_data[field_name] = "Mock safety evaluation reasoning."
+                    elif response_model.__name__ == "SupervisorDecision":
+                        if field_name == "next_agent":
+                            if any(
+                                w in prompt_content
+                                for w in ["ship", "policy", "cancel", "return", "faq"]
+                            ):
+                                mock_data[field_name] = "SUPPORT"
+                            elif any(
+                                w in prompt_content
+                                for w in [
+                                    "product",
+                                    "show",
+                                    "shoes",
+                                    "clothes",
+                                    "catalog",
+                                ]
+                            ):
+                                mock_data[field_name] = "SHOPPING"
+                            elif any(
+                                w in prompt_content
+                                for w in ["add", "cart", "checkout", "pay"]
+                            ):
+                                mock_data[field_name] = "ORDER"
+                            else:
+                                mock_data[field_name] = "FINISH"
+                        else:
+                            mock_data[field_name] = (
+                                "Supervisor routing based on query content triggers."
+                            )
                     else:
                         mock_data[field_name] = f"Mock {field_name}"
                 elif field_info.annotation == bool:
